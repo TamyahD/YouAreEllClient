@@ -21,6 +21,7 @@ public class SimpleShell {
     }
     public static void main(String[] args) throws java.io.IOException, InterruptedException {
         IdController idController = new IdController();
+        MessageController messageController = new MessageController();
 
         YouAreEll urll = new YouAreEll(new TransactionController(
                 new MessageController(), new IdController()));
@@ -46,6 +47,7 @@ public class SimpleShell {
                 continue;
             if (command.equals("exit") || command.equals("quit")) {
                 System.out.println("bye!");
+                messageController.getMessages();
 //                idController.getIds();
 //                String r = ServerController.getServerInstance().getURL("http://zipcode.rocks:8085/ids");
 //                System.out.println(r);

@@ -74,6 +74,8 @@ public class IdController {
         return id;
     }
 
+//    post message
+//    /ids/githubName/messages
     public Id putId(Id id) {
         return null;
     }
