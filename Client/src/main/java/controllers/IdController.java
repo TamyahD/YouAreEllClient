@@ -4,28 +4,30 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import models.Id;
 import org.apache.http.HttpEntity;
-import org.apache.http.client.ResponseHandler;
-import org.apache.http.impl.client.BasicResponseHandler;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.util.EntityUtils;
-import java.io.BufferedReader;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class IdController {
     private HashMap<String, Id> allIds;
-    Id myId;
+//    Id myId;
     Id newId;
     ObjectMapper mapper = new ObjectMapper();
     ServerController sc = ServerController.getServerInstance();
+    ArrayList<Id> idList = new ArrayList<>();
+    int count =0;
 
 
     public ArrayList<Id> getIds() throws IOException {
-        ArrayList<Id> idList = new ArrayList<>();
         sc.getURL("http://zipcode.rocks:8085/ids");
         Integer status = sc.handleResponse(sc.httpResponse);    //http response code, successful or failed connection
         HttpEntity httpEntity = sc.httpResponse.getEntity();    //page content from http get request
-        int count =0;
 
         System.out.println("status: " +status);
 //        if (status >=200 && status <300) {  //status code 200-299 successful?
@@ -36,17 +38,16 @@ public class IdController {
         count=list.size();
         System.out.println("count: "+count);
         for (Object obj : list) {
-//            System.out.println("#"+list.indexOf(obj));
             String objStr = obj.toString();
-//            System.out.println(objStr);
 
             String id = objStr.substring(objStr.indexOf("id=")+3, objStr.indexOf(","));
-//            System.out.println("id -> "+id);
-
             String name = objStr.substring(objStr.indexOf("name=")+5, objStr.lastIndexOf(","));
-//            System.out.println("name -> "+name);
-
             String github = objStr.substring(objStr.indexOf("github=")+7, objStr.length()-1);
+
+//            System.out.println("#"+list.indexOf(obj));
+//            System.out.println(objStr);
+//            System.out.println("id -> "+id);
+//            System.out.println("name -> "+name);
 //            System.out.println("github -> "+github);
 
 //            System.out.println("");
@@ -56,12 +57,21 @@ public class IdController {
         return idList;
     }
 
-    public Id postId(Id id) {
+    public Id postId(Id id) throws IOException {
         // create json from id
         // call server, get json result Or error
         // result json to Id obj
+        HttpPost httpPost = new HttpPost("http://zipcode.rocks:8085/ids");
+        Id addId = new Id("12345abcdefg3333","didntThinkIWouldGetThisFar", "TamyahD");
+        StringEntity jsonId = new StringEntity(mapper.writeValueAsString(addId), ContentType.APPLICATION_JSON);
 
-        return null;
+        httpPost.setEntity(jsonId);
+        CloseableHttpResponse response = sc.httpClient.execute(httpPost);
+
+        if (response.getStatusLine().getStatusCode() != 200) {
+            System.out.println("Id not added to server: " + response.getStatusLine().getStatusCode());
+        }
+        return id;
     }
 
     public Id putId(Id id) {

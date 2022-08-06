@@ -2,6 +2,7 @@ package controllers;
 
 import models.Id;
 
+import java.io.IOException;
 import java.util.List;
 
 public class TransactionController {
@@ -22,7 +23,11 @@ public class TransactionController {
 //    }
     public String postId(String idtoRegister, String githubName) {
         Id tid = new Id(idtoRegister, githubName);
-        tid = idCtrl.postId(tid);
+        try {
+            tid = idCtrl.postId(tid);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         return ("Id registered.");
     }
 

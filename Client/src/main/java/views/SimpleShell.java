@@ -72,12 +72,20 @@ public class SimpleShell {
             // Specific Commands.
 
             // ids
-            if (commandsList.contains("ids")) {
-                for (Id id : idController.getIds()) {
-                    System.out.println("#"+index++);
-                    System.out.println("user id -> "+id.getUid());
-                    System.out.println("name -> "+id.getName());
-                    System.out.println("github -> "+id.getGithub()+"\n");
+//            if (commandsList.contains("ids")) {
+            if(commandsList.get(0).equals("ids")) {
+                if (commandsList.size() ==1) {
+                    for (Id id : idController.getIds()) {
+                        System.out.println("#"+index++);
+                        System.out.println("user id -> "+id.getUid());
+                        System.out.println("name -> "+id.getName());
+                        System.out.println("github -> "+id.getGithub()+"\n");
+                    }
+                }
+                if (commandsList.size() ==3) {
+                    Id myId = new Id(commandsList.get(1), commandsList.get(2));
+                    idController.postId(myId);
+                    System.out.println("Your ID is now posted :)");
                 }
                 continue;
             }
